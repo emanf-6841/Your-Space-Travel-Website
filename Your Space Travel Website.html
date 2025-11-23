@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aetheron - Journey to the Crystal Planet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #f0f0f0;
+            overflow-x: hidden;
+        }
+
+        /* Starfield Background */
+        .starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 50px;
+            background: rgba(26, 11, 46, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(90deg, #e94560, #00fff5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(233, 69, 96, 0.5);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #f0f0f0;
+            text-decoration: none;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #00fff5;
+            text-shadow: 0 0 10px #00fff5;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, #1a0b2e 0%, #16213e 50%, #3d1b4d 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .planet {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle at 30% 30%, #ff6b9d, #e94560, #8b3a62);
+            border-radius: 50%;
+            box-shadow: 0 0 100px rgba(233, 69, 96, 0.6), inset -30px -30px 80px rgba(0, 0, 0, 0.4);
+            animation: float 6s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-30px); }
+        }
+
+        .hero-content {
+            z-index: 2;
+            margin-top: 100px;
+        }
+
+        .hero h1 {
+            font-size: 80px;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #00fff5, #e94560, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { filter: drop-shadow(0 0 20px rgba(0, 255, 245, 0.5)); }
+            50% { filter: drop-shadow(0 0 40px rgba(233, 69, 96, 0.8)); }
+        }
+
+        .hero p {
+            font-size: 24px;
+            margin-bottom: 40px;
+            color: #00fff5;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            font-size: 18px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #e94560, #ff6b9d);
+            color: white;
+            box-shadow: 0 5px 30px rgba(233, 69, 96, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 40px rgba(233, 69, 96, 0.6);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #00fff5;
+            border: 2px solid #00fff5;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 255, 245, 0.1);
+            box-shadow: 0 0 20px rgba(0, 255, 245, 0.5);
+        }
+
+        /* Section Styling */
+        section {
+            padding: 100px 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 48px;
+            text-align: center;
+            margin-bottom: 60px;
+            background: linear-gradient(90deg, #00fff5, #e94560);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Planet Info Section */
+        .planet-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .planet-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 255, 245, 0.2);
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: #00fff5;
+            box-shadow: 0 10px 30px rgba(0, 255, 245, 0.3);
+        }
+
+        .stat-number {
+            font-size: 36px;
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            color: #00fff5;
+            margin-top: 10px;
+        }
+
+        .planet-description {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(233, 69, 96, 0.2);
+        }
+
+        .planet-description h3 {
+            color: #e94560;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .planet-description p {
+            line-height: 1.8;
+            color: #f0f0f0;
+        }
+
+        /* Packages Section */
+        .packages {
+            background: linear-gradient(180deg, transparent, rgba(22, 33, 62, 0.3));
+        }
+
+        .package-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .package-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            border: 2px solid transparent;
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .package-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, rgba(233, 69, 96, 0.1), rgba(0, 255, 245, 0.1));
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .package-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: #00fff5;
+            box-shadow: 0 20px 50px rgba(0, 255, 245, 0.3);
+        }
+
+        .package-card:hover::before {
+            opacity: 1;
+        }
+
+        .package-name {
+            font-size: 32px;
+            color: #ffd700;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .package-price {
+            font-size: 48px;
+            color: #e94560;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .package-features {
+            list-style: none;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .package-features li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: #f0f0f0;
+        }
+
+        .package-features li::before {
+            content: '✓';
+            color: #00fff5;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        /* Journey Timeline */
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .timeline-item {
+            display: flex;
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .timeline-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #e94560, #00fff5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-right: 30px;
+            box-shadow: 0 0 30px rgba(0, 255, 245, 0.5);
+        }
+
+        .timeline-content {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            flex: 1;
+            border-left: 3px solid #00fff5;
+        }
+
+        .timeline-content h3 {
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+
+        /* Gallery Section */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .gallery-item {
+            position: relative;
+            height: 300px;
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.05);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, transparent, rgba(26, 11, 46, 0.9));
+            display: flex;
+            align-items: flex-end;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+
+        /* Booking Section */
+        .booking {
+            background: linear-gradient(135deg, rgba(233, 69, 96, 0.1), rgba(0, 255, 245, 0.1));
+            text-align: center;
+        }
+
+        .booking-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 255, 245, 0.2);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #00fff5;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            color: #f0f0f0;
+            font-size: 16px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #00fff5;
+            box-shadow: 0 0 20px rgba(0, 255, 245, 0.3);
+        }
+
+        /* Footer */
+        footer {
+            background: #1a0b2e;
+            padding: 50px;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-section h3 {
+            color: #00fff5;
+            margin-bottom: 20px;
+        }
+
+        .footer-section a {
+            display: block;
+            color: #f0f0f0;
+            text-decoration: none;
+            margin: 10px 0;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: #e94560;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            background: #e94560;
+            transform: translateY(-3px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 15px 20px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 48px;
+            }
+
+            .hero p {
+                font-size: 18px;
+            }
+
+            .planet {
+                width: 250px;
+                height: 250px;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .planet-info {
+                grid-template-columns: 1fr;
+            }
+
+            section {
+                padding: 60px 20px;
+            }
+
+            .section-title {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Starfield Background -->
+    <div class="starfield" id="starfield"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">🚀 AETHERON</div>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#planet">Planet</a></li>
+            <li><a href="#packages">Packages</a></li>
+            <li><a href="#journey">Journey</a></li>
+            <li><a href="#booking">Book Now</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="planet"></div>
+        <div class="hero-content">
+            <h1>DISCOVER AETHERON</h1>
+            <p>Where the Cosmos Meets Wonder</p>
+            <div class="cta-buttons">
+                <a href="#booking" class="btn btn-primary">Book Your Journey</a>
+                <a href="#planet" class="btn btn-secondary">Explore Planet</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Planet Info Section -->
+    <section id="planet">
+        <h2 class="section-title">Welcome to Aetheron</h2>
+        <div class="planet-info">
+            <div class="planet-stats">
+                <div class="stat-card">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">Moons</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">99.8%</div>
+                    <div class="stat-label">Safety Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Support</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">10K+</div>
+                    <div class="stat-label">Travelers</div>
+                </div>
+            </div>
+            <div class="planet-description">
+                <h3>The Crystal Planet</h3>
+                <p>Aetheron isn't just a destination—it's a transformation. Walk through bioluminescent forests that glow at your touch. Float between islands of living crystal suspended in eternal twilight. Witness auroras that dance to the rhythm of your heartbeat.</p>
+                <br>
+                <p>Discovered in 2048, Aetheron has become humanity's most sought-after destination. Its unique Aether Crystals respond to human emotions, creating an experience that's different for every traveler. Ancient ruins hint at a civilization that achieved perfect harmony with their world.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Packages Section -->
+    <section class="packages" id="packages">
+        <h2 class="section-title">Choose Your Adventure</h2>
+        <div class="package-grid">
+            <div class="package-card">
+                <div class="package-name">🌟 EXPLORER</div>
+                <div class="package-price">$50,000</div>
+                <ul class="package-features">
+                    <li>7-day journey</li>
+                    <li>Standard shuttle</li>
+                    <li>Crystal forest tour</li>
+                    <li>Gravity training</li>
+                    <li>Basic accommodation</li>
+                    <li>Group expeditions</li>
+                </ul>
+                <a href="#booking" class="btn btn-primary" style="width: 100%;">Select Package</a>
+            </div>
+            <div class="package-card">
+                <div class="package-name">💎 PIONEER</div>
+                <div class="package-price">$125,000</div>
+                <ul class="package-features">
+                    <li>14-day expedition</li>
+                    <li>Luxury cruiser</li>
+                    <li>Private island access</li>
+                    <li>Crystal harvesting</li>
+                    <li>Moon base overnight</li>
+                    <li>Personal guide</li>
+                </ul>
+                <a href="#booking" class="btn btn-primary" style="width: 100%;">Select Package</a>
+            </div>
+            <div class="package-card">
+                <div class="package-name">👑 SOVEREIGN</div>
+                <div class="package-price">$500,000</div>
+                <ul class="package-features">
+                    <li>30-day odyssey</li>
+                    <li>Personal spacecraft</li>
+                    <li>All zones unlocked</li>
+                    <li>Ancient ruins access</li>
+                    <li>Crystal therapy</li>
+                    <li>Zero-gravity spa</li>
+                </ul>
+                <a href="#booking" class="btn btn-primary" style="width: 100%;">Select Package</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Journey Timeline -->
+    <section id="journey">
+        <h2 class="section-title">Your Journey to Aetheron</h2>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-icon">🌍</div>
+                <div class="timeline-content">
+                    <h3>Earth Departure</h3>
+                    <p>Launch from our orbital station via advanced ion propulsion spacecraft. Experience zero-gravity as you leave Earth's atmosphere.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-icon">🛰️</div>
+                <div class="timeline-content">
+                    <h3>Space Station Layover</h3>
+                    <p>2-hour rest at the International Gateway Station. Enjoy panoramic views of Earth and prepare for hyperspace jump.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-icon">⚡</div>
+                <div class="timeline-content">
+                    <h3>Hyperspace Jump</h3>
+                    <p>3-day journey through hyperspace corridors. Experience time dilation and witness cosmic phenomena impossible to see from Earth.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-icon">🚪</div>
+                <div class="timeline-content">
+                    <h3>Aetheron Gateway</h3>
+                    <p>Arrive at Aetheron's orbital gateway. First glimpse of the crystal planet and its three moons through observation deck.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-icon">🪐</div>
+                <div class="timeline-content">
+                    <h3>Landing & Adventure Begins</h3>
+                    <p>Atmospheric entry and landing at Crystal Bay Port. Your transformation begins the moment you step onto Aetheron soil.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Section -->
+    <section class="booking" id="booking">
+        <h2 class="section-title">Reserve Your Seat</h2>
+        <p style="margin-bottom: 40px; font-size: 18px;">Your journey to the cosmos begins now. Limited seats available for 2025.</p>
+        <div class="booking-form">
+            <form>
+                <div class="form-group">
+                    <label for="email">📧 Email Address</label>
+                    <input type="email" id="email" placeholder="your@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="date">📅 Preferred Launch Date</label>
+                    <input type="date" id="date" required>
+                </div>
+                <div class="form-group">
+                    <label for="package">🎫 Choose Package</label>
+                    <select id="package" required>
+                        <option value="">Select a package</option>
+                        <option value="explorer">Explorer - $50,000</option>
+                        <option value="pioneer">Pioneer - $125,000</option>
+                        <option value="sovereign">Sovereign - $500,000</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Launch My Journey 🚀</button>
+            </form>
+            <p style="margin-top: 30px; color: #00fff5; font-size: 14px;">
+                🔒 Secure Booking | 💳 Flexible Payment | ↩️ Free Cancellation
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="#planet">About Aetheron</a>
+                <a href="#packages">Travel Packages</a>
+                <a href="#journey">Journey Details</a>
+                <a href="#booking">Book Now</a>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <a href="#">Safety Guidelines</a>
+                <a href="#">FAQ</a>
+                <a href="#">Contact Us</a>
+                <a href="#">Terms & Conditions</a>
+            </div>
+            <div class="footer-section">
+                <h3>Connect With Us</h3>
+                <div class="social-links">
+                    <a href="#">📘</a>
+                    <a href="#">🐦</a>
+                    <a href="#">📷</a>
+                    <a href="#">💼</a>
+                </div>
+            </div>
+        </div>
+        <p style="color: rgba(255, 255, 255, 0.5); margin-top: 30px;">
+            © 2025 Aetheron Space Travel Inc. | Making Dreams a Reality Since 2048
+        </p>
+    </footer>
+
+    <script>
+        // Generate starfield
+        const starfield = document.getElementById('starfield');
+        for (let i = 0; i < 200; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.width = Math.random() * 3 + 'px';
+            star.style.height = star.style.width;
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            starfield.appendChild(star);
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Form submission handler
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('🚀 Booking request received! Our team will contact you within 24 hours to confirm your journey to Aetheron.');
+            this.reset();
+        });
+
+        // Add parallax effect to planet
+        let planet = document.querySelector('.planet');
+        window.addEventListener('mousemove', (e) => {
+            let x = (window.innerWidth - e.pageX) / 50;
+            let y = (window.innerHeight - e.pageY) / 50;
+            planet.style.transform = `translate(${x}px, ${y}px)`;
+        });
+    </script>
+</body>
+</html>
